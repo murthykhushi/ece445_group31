@@ -15,3 +15,20 @@ Met with Gregg at the machine shop to get advice on the physical housing and PCB
 **Next Steps:**
 1. Update KiCad outline to 4" x 4" with 1/8" corner holes and single-edge I/O grouping.
 2. Source panel-mount buttons, a remote USB extension, and a suitable plushie.
+
+# Lab Notebook - 09/28/2026
+
+**Topic:** Pre PCB Design Meeting 
+**Author:** Khushi Murthy
+
+---
+
+Met with group to discuss PCB layout:
+
+* Designed all essential parts
+* <img width="933" height="658" alt="Screenshot 2026-09-29 at 2 33 58 PM" src="https://github.com/user-attachments/assets/cce26a5e-0d58-49a2-9e8a-6ca2e844dc6e" />
+
+**Next Steps:**
+1. Go to PCB review Tuesday in ECEB
+2. Edit PCB design based on feedback 
+
