@@ -30,5 +30,28 @@ Met with group to discuss PCB layout:
 
 **Next Steps:**
 1. Go to PCB review Tuesday in ECEB
+2. Edit PCB design based on feedback
+
+# Lab Notebook - 09/29/2026
+
+**Topic:** PCB Design Meeting 
+**Author:** Khushi Murthy
+
+---
+
+Met with group to discuss PCB layout:
+Goals: 
+* Review Design
+* Prepare for possibly ordering the board
+
+Meeting Summaries
+* Added mounting holes 1/8th inch each 
+* Consolidated Order Spreadsheet
+* Decided a final pcb layout with all parts on one board
+* Finished the wiring
+ 
+**Next Steps:**
+1. Submit an order 
 2. Edit PCB design based on feedback 
+
 
