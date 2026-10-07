@@ -52,6 +52,30 @@ Meeting Summaries
  
 **Next Steps:**
 1. Submit an order 
-2. Edit PCB design based on feedback 
+2. Edit PCB design based on feedback
+
+# Lab Notebook - 10/06/2026
+
+**Topic:** Pre Design Review Meeting 
+**Author:** Khushi Murthy
+
+---
+
+Goals: 
+* Review design decisions with group
+* Ensure we're on pace to submit PCB order by second round of order
+* Review the component order through ECE shop
+
+
+Meeting Summaries & decisions
+* Reviewed design decisions like no 3d encasing, two different power railings (3.3V and 5V)
+* Debounce circuit for single button clicks to not get mistaken as double click via circuit
+* voltage divider from sensing & motors to MCU to go down from 5V to 3.3V
+ 
+**Next Steps:**
+1. Design Review Presentation Tomorrow
+2. Breadboard work 
+
+
 
 
