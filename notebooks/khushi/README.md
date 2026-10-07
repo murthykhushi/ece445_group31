@@ -16,4 +16,4 @@ Session Summary:
 
   
 **Next Steps:**
-1. Finish Design Document 
+1. Finish Design Document with group before deadline
