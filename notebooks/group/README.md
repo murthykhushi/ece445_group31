@@ -76,6 +76,28 @@ Meeting Summaries & decisions
 1. Design Review Presentation Tomorrow
 2. Breadboard work 
 
+# Lab Notebook - 10/07/2026
+
+**Topic:** Post Design Review Meeting 
+**Author:** Khushi Murthy
+
+---
+
+Goals: 
+* Go over feedback from professor about our design
+* Decide on next steps for project and what we want to edit on our project 
+
+Meeting Summaries & decisions
+* Professor feedback was that we were lacking complexity in our design --> we decided we wanted to elevate the software complexity as we are all more experienced in that field and have taken less electrical/ hardware classes
+* Some ideas we have are:
+   * Upgrade the 1.0 Hz OpenCV webcam presence tracking to a custom CUDA and TensorRT GPU vision pipeline that tracks 60 FPS 3D head pose and blink dynamics, ensuring the background host application stays below its 10% CPU limit, which was one of our goals.
+   * Transform the local USB serial telemetry, which currently transmits focus scores every 2000 ms, into a distributed system utilizing a custom UDP/QUIC network client and FlatBuffers serialization for low-latency remote synchronization.
+   * Transition the STM32 microcontroller from its existing bare-metal four-state behavioral machine to a preemptive FreeRTOS architecture, integrating a custom ARM Thumb-2 assembly decompression routine to render advanced facial animations without exceeding the hardware's 20 KB SRAM limit.  
+ 
+**Next Steps:**
+1. Finish the PCB audit
+2. Send to Tim for ordering 
+
 
 
 
