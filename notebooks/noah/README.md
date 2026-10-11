@@ -1,5 +1,18 @@
 # Noah's Lab Notebook
 
+## 10/11
+
+### Objectives:
+- Create plan of action for upcoming breadboard demo
+- Pick up what we can from our order
+
+### What was done:
+On Thursday, Michael finalized the PCB parts and order with our TA Tim. Our order was then confirmed and the E-Shop parts were delivered to the lab.
+In the lab:
+- We organized our parts by what we can use on breadboard and what we couldn't (eg. sorting the capactiors, resistors, LED, and button)
+- Found equivalent parts from our old ECE kits
+- Built a button for demonstration. Only subsystem we can build with our current parts.
+
 ## 10/6
 
 ### Objectives:
