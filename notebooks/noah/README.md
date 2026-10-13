@@ -1,5 +1,13 @@
 # Noah's Lab Notebook
 
+## 10/12
+
+### Objectives:
+- Build a working Servo demo using an ESP32 as a placeholder
+
+### What was done:
+By making use of the borrowed ESP32 development board, tactile button, and servo motor, we put together a small working demo using a Python Script and Arduino project. The biggest issue we ran into was connecting the personal device (laptop) to the ESP32. After a short while, we found out that we needed to use a Mac device as opposed to Windows due to a small port error. By making the switch, running a local Python script, and loading the code to the ESP32, we were able to get a small demo of facial detection stopping the servo, a lack of presence to start it, and the button to snooze the servo motor.
+
 ## 10/11
 
 ### Objectives:
