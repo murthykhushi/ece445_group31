@@ -96,7 +96,29 @@ Meeting Summaries & decisions
  
 **Next Steps:**
 1. Finish the PCB audit
-2. Send to Tim for ordering 
+2. Send to Tim for ordering
+
+# Lab Notebook - 10/14/2026
+
+**Topic:** Breadboard Demo Notes
+**Author:** Khushi Murthy
+
+---
+
+Demo Summaries: 
+* Goal was to have a servo motor running at different speeds based on how focused we were, and an input button that could "snooze" the motor. The snooze would wear off after 10 seconds of continuous facial detection.
+* Had a working demo on Monday but during demo itself it was not working.
+* Diagnosed that it was because the esp ran on 3.3V while the motor ran on 5V and sometimes could work because threshold was so close.
+* We added a transistor to step the voltage properly but at this point both motors we had were fried.
+* Recieved 7.5/10 points for diagnosing the issue and understanding the circuit 
+
+ 
+**Next Steps:**
+1. Get a new motor so that we can test software components that we have so far before the PCB board arrives 
+
+
+
+
 
 
 
