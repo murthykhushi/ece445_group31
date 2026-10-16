@@ -124,11 +124,70 @@ Feedback & Response:
   - Physical Presence: A tangible, desk-level companion instead of a dismissible digital pop-up.
   - Gentle Feedback: Real-world cues like tail-wagging and facial expressions rather than stressful alarms or forced screen-locks.
   - Positive Reinforcement: It builds sustainable focus habits without causing "toxic productivity guilt".
-  
-  
-  
- 
- 
+
+
+# Lab Notebook - 10/16/2026
+
+**Topic:** Updated Weekly Scheduele Post New Additions
+**Author:** Khushi Murthy
+---
+
+Notebook Entry Description: 
+* An Updated weekly scheduele post adding new software complexity to project (ML training and possibly gpu acceleration):
+
+- Week 1:
+
+# Lab Notebook - 10/17/2026
+
+**Topic:** Notes on new ML training etc...
+**Author:** Khushi Murthy
+---
+
+Summary: Defining the supervised machine learning pipeline, ground-truth data collection protocol, and literature-backed metrics to replace the heuristic focus score formula with data-driven regression.
+# Supervised ML Pipeline & Focus Metric Architecture
+
+## 1. Focus Metric Formulation & Literature Basis
+
+* **Scientific Baseline (Visual Engagement):** We utilize **PERCLOS** (Percentage of Eye Closure) via Eye Aspect Ratio (EAR) as our foundational visual attention metric:
+  $$\text{EAR} = \frac{\vert{}\vert{}p_2 - p_6\vert{}\vert{} + \vert{}\vert{}p_3 - p_5\vert{}\vert{}}{2 \cdot \vert{}\vert{}p_1 - p_4\vert{}\vert{}}$$
+  PERCLOS serves as an established standard in cognitive fatigue and driver-vigilance research, tracking microsleeps and drowsiness far more reliably than binary face presence.
+* **Commercial Contrast:** Existing commercial tools rely either solely on OS-level window logging (e.g., RescueTime) or expensive dedicated hardware eye-trackers (e.g., Tobii).
+* **Novel Contribution:** A multi-modal fusion model combining software telemetry with webcam-based computer vision (no specialized IR hardware required) to drive a physical desk peripheral.
+
+---
+
+## 2. Feature Pipeline (X-Data) & Model Architecture
+
+Telemetry is aggregated into non-overlapping **2.0-second time windows**:
+
+* **$x_1$ (PERCLOS):** Proportion of frames in the 2.0 s window where $\text{EAR} < 0.20$.
+* **$x_2$ (3D Head Pose):** Pitch, yaw, and roll deviation from center screen (using PnP on facial landmarks) to quantify glance direction.
+* **$x_3$ (Keystroke Timing Entropy):** Shannon entropy of inter-keystroke intervals to distinguish structured coding cadences from erratic web browsing.
+* **$x_4$ (Application Category):** Integer-mapped categorical weight based on active window (e.g., IDE = $+1.0$, Documentation = $+0.7$, Media = $-0.5$).
+* **Model Selection:** **Random Forest Regressor** (via `scikit-learn`). Fast inference keeps CPU utilization safely below the $<10\%$ host budget.
+* **Output Smoothing:** A 1D Kalman Filter models cognitive focus as a hidden state, dynamically suppressing momentary sensor noise (e.g., sneezes, sudden lighting changes) before streaming the 0–100 score over USB to the STM32.
+
+---
+
+## 3. Ground-Truth Data Collection Protocol (Y-Data)
+
+To supervise training, continuous labels $Y \in [0, 100]$ are collected using two synchronized methods:
+
+1. **Experience Sampling Method (ESM):** A background UI script prompts the user every 15–20 minutes to self-report perceived focus on a 1–10 scale. The preceding 60 seconds of telemetry are labeled with this score.
+2. **Task-Bounded Sessions:** Controlled sessions of known cognitive load:
+   * *High-Focus (Score: 85–100):* 25-minute uninterrupted active coding/writing tasks.
+   * *Low-Focus (Score: 10–30):* 15-minute passive video watching and social browsing.
+
+---
+
+## 4. Volume Targets & Verification Milestones
+
+* **Sampling Rate:** 1 feature vector logged every 2.0 seconds.
+* **Target Dataset Size:** **2,500 to 3,000 labeled instances** (~1.4 to 1.7 hours of total active session data).
+* **Team Distribution:** All 3 team members (Khushi, Michael, Noah) run the logging script across regular work sessions to reach the target within 4 days.
+* **Deliverable for Next TA Meeting:**
+  * Trained Random Forest model with train/test split ($80/20$).
+  * Performance metrics: Mean Absolute Error (MAE), $R^2$ score, and feature importance rankings proving PERCLOS and typing cadence contributions.
  
  
 
