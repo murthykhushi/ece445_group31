@@ -136,34 +136,34 @@ Notebook Entry Description:
 * An Updated weekly scheduele post adding new software complexity to project (ML training and possibly gpu acceleration):
 
 * Week 1: ML Pipeline & Ground Truth Collection**
-  * Deploy experience sampling (ESM) script and task-bounded logging to collect 2,500–3,000 feature/label rows[cite: 1, 2].
-  * Assemble custom PCB and verify 5.0 V and 3.3 V power rails[cite: 1, 6].
-  * *Deliverable:* Active telemetry dataset logging; PCB power-on verified[cite: 1, 6].
+  * Deploy experience sampling (ESM) script and task-bounded logging to collect 2,500–3,000 feature/label rows.
+  * *Deliverable:* Active telemetry dataset logging.
 
 * Week 2: Model Training & Vision Pipeline**
-  * Train scikit-learn Random Forest Regressor on PERCLOS, head pose, and typing entropy; evaluate $R^2$ and MAE[cite: 1, 2].
-  * Integrate ultrasonic and button inputs on MCU; prototype GPU-accelerated MediaPipe vision as stretch goal[cite: 1, 6].
-  * *Deliverable:* Validated focus ML model; sensor communication verified[cite: 1, 6].
+  * Train scikit-learn Random Forest Regressor on PERCLOS, head pose, and typing entropy; evaluate $R^2$ and MAE.
+  * Integrate ultrasonic and button inputs on MCU; prototype GPU-accelerated MediaPipe vision as stretch goal.
+  * *Deliverable:* Validated focus ML model; sensor communication verified.
 
 * Week 3: Subsystem Integration & Kalman Filter**
-  * Replace heuristic formula with ML model inference and 1D Kalman state smoothing[cite: 1, 2].
-  * Mount PCB, 3.5" TFT display, and HS-311 servo to internal 3D-printed PETG skeletal chassis[cite: 1, 6].
-  * *Deliverable:* Live ML focus score streaming over USB under <10% host CPU load[cite: 1, 3].
+  * Assemble PCB 
+  * Replace heuristic formula with ML model inference and 1D Kalman state smoothing.
+  * Mount PCB, 3.5" TFT display, and HS-311 servo to internal 3D-printed PETG skeletal chassis.
+  * *Deliverable:* Live ML focus score streaming over USB under <10% host CPU load.
 
 * Week 4: Full Assembly & Enclosure Fitting**
-  * Fit PETG skeleton and electronics inside plush enclosure, routing screen bezel and sensor eyelets[cite: 2, 6].
-  * Integrate USB-C host communication with STM32 behavioral state machine[cite: 1, 2].
-  * *Deliverable:* Fully assembled physical desktop companion prototype[cite: 1, 6].
+  * Fit PETG skeleton and electronics inside plush enclosure, routing screen bezel and sensor eyelets.
+  * Integrate USB-C host communication with STM32 behavioral state machine.
+  * *Deliverable:* Fully assembled physical desktop companion prototype.
 
 * Week 5: End-to-End System Testing & Thermal Validation**
-  * Perform R&V table tests: DMA display latency (<100 ms) and servo sweeps (<500 ms)[cite: 1, 3].
-  * Stress-test AMS1117-3.3 regulator thermal limits inside enclosed plush housing[cite: 1, 6].
-  * *Deliverable:* Complete system verification; passing mock demonstration[cite: 6].
+  * Perform R&V table tests: DMA display latency (<100 ms) and servo sweeps (<500 ms).
+  * Stress-test AMS1117-3.3 regulator thermal limits inside enclosed plush housing.
+  * *Deliverable:* Complete system verification; passing mock demonstration.
 
 * Week 6: Final Presentation & Deliverables**
-  * Generate ML validation curves, feature importance charts, and finalize presentation deck[cite: 1, 6].
-  * Complete final engineering design report[cite: 1, 6].
-  * *Deliverable:* Final Functional Demo[cite: 1, 6].
+  * Generate ML validation curves, feature importance charts, and finalize presentation deck.
+  * Complete final engineering design report.
+  * *Deliverable:* Final Functional Demo.
 
 # Lab Notebook - 10/17/2026
 
