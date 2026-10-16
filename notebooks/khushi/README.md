@@ -1,3 +1,16 @@
+# Lab Notebook - 10/16/2026
+
+**Topic:** Software & ML Pipeline Initialization
+**Author:** Khushi Murthy
+
+**Objectives:** Scaffold the core software architecture and machine learning pipeline components to transition the desktop companion from a heuristic formula to a data-driven Random Forest regression model.
+
+### File Summary
+* **`data_logger.py`**: Background script using OS hooks and ESM pop-ups to capture peripheral telemetry and user-labeled focus scores into synchronized CSV datasets.
+* **`train_model.py` (Script 1)**: Supervised learning script that aggregates logged CSVs, performs feature encoding, trains a Random Forest Regressor, and serializes the model binary.
+* **`train_model.py` (Script 2)**: Supplementary training script variant configured for iterative feature engineering and performance evaluation ($R^2$ and MAE).
+* **`live_inference.py`**: Live execution script that loads the trained model, smooths predictions via a 1D Kalman Filter, and streams focus scores over serial to the STM32 microcontroller.
+
 # Lab Notebook - 10/14/2026
 
 **Topic:** Additional Complexity Ideation 
