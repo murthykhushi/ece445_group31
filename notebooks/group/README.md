@@ -2,9 +2,7 @@
 
 **Topic:** Machine Shop Notes (Gregg)  
 **Author:** Michael Yang
-
 ---
-
 Met with Gregg at the machine shop to get advice on the physical housing and PCB layout:
 
 * Board Layout: Keep PCB footprint around 4" x 4" with standard 1/8" mounting holes. Put all I/O connectors on the same edge to keep wiring tidy.
@@ -20,9 +18,7 @@ Met with Gregg at the machine shop to get advice on the physical housing and PCB
 
 **Topic:** Pre PCB Design Meeting 
 **Author:** Khushi Murthy
-
 ---
-
 Met with group to discuss PCB layout:
 
 * Designed all essential parts
@@ -36,9 +32,7 @@ Met with group to discuss PCB layout:
 
 **Topic:** PCB Design Meeting 
 **Author:** Khushi Murthy
-
 ---
-
 Met with group to discuss PCB layout:
 Goals: 
 * Review Design
@@ -58,9 +52,7 @@ Meeting Summaries
 
 **Topic:** Pre Design Review Meeting 
 **Author:** Khushi Murthy
-
 ---
-
 Goals: 
 * Review design decisions with group
 * Ensure we're on pace to submit PCB order by second round of order
@@ -80,9 +72,7 @@ Meeting Summaries & decisions
 
 **Topic:** Post Design Review Meeting 
 **Author:** Khushi Murthy
-
 ---
-
 Goals: 
 * Go over feedback from professor about our design
 * Decide on next steps for project and what we want to edit on our project 
@@ -102,9 +92,7 @@ Meeting Summaries & decisions
 
 **Topic:** Breadboard Demo Notes
 **Author:** Khushi Murthy
-
 ---
-
 Demo Summaries: 
 * Goal was to have a servo motor running at different speeds based on how focused we were, and an input button that could "snooze" the motor. The snooze would wear off after 10 seconds of continuous facial detection.
 * Had a working demo on Monday but during demo itself it was not working.
@@ -112,14 +100,36 @@ Demo Summaries:
 * We added a SN3904 transistor to step the voltage properly but at this point both motors we had were fried.
 * Recieved 7.5/10 points for diagnosing the issue and understanding the circuit 
 
- 
 **Next Steps:**
 1. Get a new motor so that we can test software components that we have so far before the PCB board arrives 
 
+# Lab Notebook - 10/15/2026
 
+**Topic:** Design Review Feedback Notes 
+**Author:** Khushi Murthy
+---
 
+Topic: 
+* We got the following feedback from design review and we wanted to address concerns here:
 
-
-
+Feedback & Response: 
+1) How will we fit the components & PCB board into a pre existing stuffed animal?
+   - All electronics and moving parts mount securely to a rigid 3D-printed PETG internal skeleton.
+   - Face/Belly: A 3.5-inch TFT display sits flush with the exterior for clear animations.
+   - Forehead: Ultrasonic sensors tilt 15° forward through the fabric, sitting next to a tactile push-button.
+   - Rear: A servo anchors to the spine to drive the articulated tail.
+   - Base: The main PCB, vibration motor, and a weighted stability plate sit at the bottom, featuring a recessed USB-C port.
+2) How do we differ from commercial products?
+  - Unlike standard on-screen blockers that are easily ignored or muted, our device offers:
+  - Physical Presence: A tangible, desk-level companion instead of a dismissible digital pop-up.
+  - Gentle Feedback: Real-world cues like tail-wagging and facial expressions rather than stressful alarms or forced screen-locks.
+  - Positive Reinforcement: It builds sustainable focus habits without causing "toxic productivity guilt".
+  
+  
+  
+ 
+ 
+ 
+ 
 
 
