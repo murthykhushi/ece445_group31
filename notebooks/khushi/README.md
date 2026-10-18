@@ -1,3 +1,32 @@
+
+# Lab Notebook - 10/17/2026
+
+**Topic:** Focus State Data Collection & Model Training
+
+---
+
+## Objective
+To build a dataset capturing various states of cognitive focus and train a machine learning model to classify these states. The goal is to reliably distinguish between states of being completely "locked in" (hyper-focused), taking a break (zero focus), and a mixed/intermediate state.
+
+## Methodology: Data Collection
+Completed a deliberate 2-hour data collection session designed to capture a wide variance in focus levels. I intentionally modulated my environment and workflow to cycle through three distinct cognitive states:
+
+*   **Hyper-Focused ("Locked In"):** Intense concentration, deep work, and zero external distractions.
+*   **Zero Focus (Breaks):** Intentional disengagement, relaxed state, and unstructured attention.
+*   **Mixed Focus:** Casual task execution with standard contextual switching and average attention span. 
+
+## Current Status
+*   ✅ **Data Gathering Complete:** 2 hours of raw telemetry/data successfully recorded and stored.
+*   🔄 **Phase Transition:** Moving from the data collection phase into the model training phase.
+
+## Next Steps for Model Training
+1.  **Data Preprocessing:** Clean the raw data, handle any missing values, and normalize the inputs.
+2.  **Labeling & Windowing:** Segment the 2-hour continuous stream into discrete time windows mapped accurately to the specific focus state (Hyper-focused, Zero focus, Mixed).
+3.  **Feature Engineering:** Extract relevant statistical or frequency-domain features from the raw data windows to feed into the model.
+4.  **Baseline Model Training:** Train an initial classifier (e.g., Random Forest, SVM, or a lightweight Neural Network) to establish baseline accuracy.
+5.  **Evaluation & Tuning:** Evaluate the model against a validation split and tune hyperparameters to improve the distinction between the "Mixed" and "Locked In" states.
+
+
 # Lab Notebook - 10/16/2026
 
 **Topic:** Software & ML Pipeline Initialization
