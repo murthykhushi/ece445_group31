@@ -16,8 +16,8 @@ Completed a deliberate 2-hour data collection session designed to capture a wide
 *   **Mixed Focus:** Casual task execution with standard contextual switching and average attention span. 
 
 ## Current Status
-*   ✅ **Data Gathering Complete:** 2 hours of raw telemetry/data successfully recorded and stored.
-*   🔄 **Phase Transition:** Moving from the data collection phase into the model training phase.
+*  COMPLETE:  **Data Gathering Complete:** 2 hours of raw telemetry/data successfully recorded and stored.
+*  IN PROGRESS: **Phase Transition:** Moving from the data collection phase into the model training phase.
 
 ## Next Steps for Model Training
 1.  **Data Preprocessing:** Clean the raw data, handle any missing values, and normalize the inputs.
