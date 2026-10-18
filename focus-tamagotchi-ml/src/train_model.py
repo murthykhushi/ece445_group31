@@ -26,6 +26,10 @@ def train_focus_model(csv_filepath_or_dir="data", model_output_path="focus_rando
     else:
         df = pd.read_csv(csv_filepath_or_dir)
         
+    # FIX: Convert categorical text columns (like active_app) into numeric codes
+    if 'active_app' in df.columns:
+        df['active_app'], _ = pd.factorize(df['active_app'])
+        
     feature_cols = [c for c in df.columns if c not in ['timestamp', 'focus_score', 'session_id']]
     target_col = 'focus_score'
     
