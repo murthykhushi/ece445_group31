@@ -1,3 +1,17 @@
+# Lab Notebook - 10/19/2026
+**Topic:** Tuning the ML model & Applying it
+---
+
+**Summary**: Added more data using the data collection script, which recorded ear,perclos,is_closed,active_app,keystrokes,mouse_clicks,focus_score. When we trained the data, we got goodfeedback and a large distribution of data points, R^2 == 99.9%. However, I had to iterate on the live script 
+
+To solve this, `live_inference.py` uses a **Hybrid Scoring System** that blends machine learning with rule-based heuristics:
+
+1.  **ML Score (40%):** The Random Forest prediction based on the user's personalized training data. Highly responsive to active input.
+2.  **Logical Base Score (60%):** A heuristic baseline that prevents observation bias. It applies severe penalties for high PERCLOS/closed eyes and rewards productive active applications (e.g., VS Code) even if keystrokes drop to zero.
+3.  **EMA Smoothing:** A 1D Kalman-style filter (Exponential Moving Average) is applied to the final blended score to prevent rapid, erratic jumping in the UI (and eventually, the hardware peripheral).
+
+Before making this change: The model was stuck at scores around 15 - 40. 
+After making this change: The model was able to have a wider span of scores, but still needs some tweaking.
 
 # Lab Notebook - 10/17/2026
 
