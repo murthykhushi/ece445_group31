@@ -171,52 +171,30 @@ Notebook Entry Description:
 **Author:** Khushi Murthy
 ---
 
-Summary: Defining the supervised machine learning pipeline, ground-truth data collection protocol, and literature-backed metrics to replace the heuristic focus score formula with data-driven regression.
-# Supervised ML Pipeline & Focus Metric Architecture
+# 🧠 ML Focus Prediction Pipeline
 
-## 1. Focus Metric Formulation & Literature Basis
+This project replaces static heuristic focus scoring with a data-driven supervised machine learning model. By fusing visual data (via webcam) with OS-level telemetry, we predict real-time cognitive focus (0-100) to drive a physical desk peripheral without requiring specialized hardware like IR eye-trackers.
 
-* **Scientific Baseline (Visual Engagement):** We utilize **PERCLOS** (Percentage of Eye Closure) via Eye Aspect Ratio (EAR) as our foundational visual attention metric:
-  $$\text{EAR} = \frac{\vert{}\vert{}p_2 - p_6\vert{}\vert{} + \vert{}\vert{}p_3 - p_5\vert{}\vert{}}{2 \cdot \vert{}\vert{}p_1 - p_4\vert{}\vert{}}$$
-  PERCLOS serves as an established standard in cognitive fatigue and driver-vigilance research, tracking microsleeps and drowsiness far more reliably than binary face presence.
-* **Commercial Contrast:** Existing commercial tools rely either solely on OS-level window logging (e.g., RescueTime) or expensive dedicated hardware eye-trackers (e.g., Tobii).
-* **Novel Contribution:** A multi-modal fusion model combining software telemetry with webcam-based computer vision (no specialized IR hardware required) to drive a physical desk peripheral.
+## 📊 1. Feature Pipeline (X-Data)
+Telemetry is aggregated into non-overlapping **60-second time windows**:
+- **Visual Fatigue:** EAR (Eye Aspect Ratio) and PERCLOS (Percentage of Eye Closure) via facial landmarks.
+- **Eye State:** Binary classification indicating if eyes are closed during the polling instant.
+- **Active Application:** Integer-encoded mapping of the currently focused desktop window.
+- **Input Activity:** Aggregate counts of keystrokes and mouse clicks to distinguish active generation (coding) from passive consumption (reading/watching).
 
----
+## 🎯 2. Ground-Truth Collection Protocol (Y-Data)
+To supervise training, continuous labels (`Y ∈ [0, 100]`) are collected using an automated Experience Sampling Method (ESM):
+- **Automated Prompting:** A background script triggers an alert every 60 seconds, prompting the user to self-report their perceived focus score.
+- **Structured Variance:** Data collection is deliberately distributed across three states to prevent model skew:
+  - *High-Focus:* Active coding, heavy typing.
+  - *Medium-Focus:* Passive work (reading documentation, watching tutorials).
+  - *Low-Focus:* Intentional distraction, casual scrolling, and leaning away from the monitor.
 
-## 2. Feature Pipeline (X-Data) & Model Architecture
+## 🤖 3. Model Architecture
+- **Model Selection:** `scikit-learn` Random Forest Regressor.
+- **Rationale:** Fast inference keeps host CPU utilization safely below 10% while naturally handling the mix of continuous (EAR) and categorical (App ID) data streams.
 
-Telemetry is aggregated into non-overlapping **2.0-second time windows**:
-
-* **$x_1$ (PERCLOS):** Proportion of frames in the 2.0 s window where $\text{EAR} < 0.20$.
-* **$x_2$ (3D Head Pose):** Pitch, yaw, and roll deviation from center screen (using PnP on facial landmarks) to quantify glance direction.
-* **$x_3$ (Keystroke Timing Entropy):** Shannon entropy of inter-keystroke intervals to distinguish structured coding cadences from erratic web browsing.
-* **$x_4$ (Application Category):** Integer-mapped categorical weight based on active window (e.g., IDE = $+1.0$, Documentation = $+0.7$, Media = $-0.5$).
-* **Model Selection:** **Random Forest Regressor** (via `scikit-learn`). Fast inference keeps CPU utilization safely below the $<10\%$ host budget.
-* **Output Smoothing:** A 1D Kalman Filter models cognitive focus as a hidden state, dynamically suppressing momentary sensor noise (e.g., sneezes, sudden lighting changes) before streaming the 0–100 score over USB to the STM32.
-
----
-
-## 3. Ground-Truth Data Collection Protocol (Y-Data)
-
-To supervise training, continuous labels $Y \in [0, 100]$ are collected using two synchronized methods:
-
-1. **Experience Sampling Method (ESM):** A background UI script prompts the user every 15–20 minutes to self-report perceived focus on a 1–10 scale. The preceding 60 seconds of telemetry are labeled with this score.
-2. **Task-Bounded Sessions:** Controlled sessions of known cognitive load:
-   * *High-Focus (Score: 85–100):* 25-minute uninterrupted active coding/writing tasks.
-   * *Low-Focus (Score: 10–30):* 15-minute passive video watching and social browsing.
-
----
-
-## 4. Volume Targets & Verification Milestones
-
-* **Sampling Rate:** 1 feature vector logged every 2.0 seconds.
-* **Target Dataset Size:** **2,500 to 3,000 labeled instances** (~1.4 to 1.7 hours of total active session data).
-* **Team Distribution:** All 3 team members (Khushi, Michael, Noah) run the logging script across regular work sessions to reach the target within 4 days.
-* **Deliverable for Next TA Meeting:**
-  * Trained Random Forest model with train/test split ($80/20$).
-  * Performance metrics: Mean Absolute Error (MAE), $R^2$ score, and feature importance rankings proving PERCLOS and typing cadence contributions.
- 
- 
-
-
+## 📈 4. Volume Targets & Milestones
+- **Sampling Rate:** 1 feature vector logged every 60 seconds.
+- **Proof-of-Concept (POC):** ~180 labeled instances (3 hours of collection) to validate the end-to-end ML pipeline and verify feature importance.
+- **Production Target:** 1,000 to 2,000 instances (~16-32 hours) per user to establish a robust, personalized baseline.
