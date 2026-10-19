@@ -3,30 +3,29 @@ import serial
 import joblib
 import time
 import warnings
-import numpy as np
 from vision_pipeline import VisionPipeline
+from desktop_pipeline import DesktopPipeline
 
-# Suppress feature name warnings from scikit-learn for cleaner output
+# Suppress feature name warnings from scikit-learn
 warnings.filterwarnings("ignore", category=UserWarning)
 
 def run_live_inference():
     print("Loading trained model from focus_random_forest.pkl...")
     try:
-        with open("focus_random_forest.pkl", "rb") as f:
-            model = joblib.load("focus_random_forest.pkl")
+        model = joblib.load("focus_random_forest.pkl")
     except Exception as e:
         print(f"Error loading model: {e}")
         return
 
-    # Initialize the vision pipeline (matches Line 26 in your traceback)
+    # Initialize both pipelines
     vision = VisionPipeline()
+    desktop = DesktopPipeline()
     
-    # Initialize serial connection
-    # Note: Update the port string (e.g., '/dev/cu.usbmodem...') to match your Arduino/Tamagotchi
+    # Initialize serial connection to Arduino/Tamagotchi
     try:
         ser = serial.Serial('/dev/cu.usbmodem14101', 9600, timeout=1) 
     except Exception as e:
-        print(f"Warning: Serial connection not found. Running in video-only mode.")
+        print(f"Warning: Serial connection not found. Running in UI-only mode.")
         ser = None
 
     cap = cv2.VideoCapture(0)
@@ -37,41 +36,46 @@ def run_live_inference():
         if not ret:
             break
 
-        # Process the frame to get the dictionary of metrics
-        metrics = vision.process_frame(frame)
+        # 1. Get metrics from both sensors
+        face_metrics = vision.process_frame(frame)
+        desktop_metrics = desktop.get_current_metrics()
         
-        # --- THE FIX ---
-        # Scikit-learn expects a 2D array (list of lists) with exactly 3 features.
-        # We extract just the 3 vision metrics and ignore any extra variables.
+        # 2. Combine into a single 6-feature array (MATCH YOUR TRAINING DATA ORDER!)
         features = [[
-            metrics.get('ear', 0.0), 
-            metrics.get('perclos', 0.0), 
-            metrics.get('is_closed', 0)
+            face_metrics.get('ear', 0.0), 
+            face_metrics.get('perclos', 0.0), 
+            face_metrics.get('is_closed', 0),
+            desktop_metrics.get('active_app_encoded', 0),
+            desktop_metrics.get('keystrokes', 0),
+            desktop_metrics.get('mouse_clicks', 0)
         ]]
 
-        # Run prediction (matches Line 70 in your traceback)
-        raw_pred = model.predict(features)[0]
+        # 3. Predict focus score
+        try:
+            raw_pred = model.predict(features)[0]
+        except ValueError as e:
+            print(f"Prediction Error: {e}")
+            raw_pred = 0.0
 
-        # Display the result on the video feed
-        status_text = f"Focus Score: {raw_pred:.2f} | EAR: {metrics['ear']:.2f}"
-        cv2.putText(frame, status_text, (30, 40), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 255, 0), 2)
+        # 4. Display on screen
+        status_text = f"Focus: {raw_pred:.2f} | App: {desktop_metrics['active_app_name']}"
+        input_text = f"Keys: {desktop_metrics['keystrokes']} | Clicks: {desktop_metrics['mouse_clicks']}"
+        
+        cv2.putText(frame, status_text, (30, 40), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 0), 2)
+        cv2.putText(frame, input_text, (30, 75), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 255), 2)
         cv2.imshow("Focus Tamagotchi - Live Inference", frame)
 
-        # Send prediction to the Tamagotchi hardware via Serial
+        # 5. Send to hardware
         if ser:
-            # Format the output for the Arduino (adjust string format as needed)
             ser.write(f"{raw_pred:.2f}\n".encode('utf-8'))
 
-        # Quit if 'q' is pressed
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
 
-    # Cleanup
     cap.release()
     cv2.destroyAllWindows()
     if ser:
         ser.close()
 
 if __name__ == "__main__":
-    # (Matches Line 93 in your traceback)
     run_live_inference()
