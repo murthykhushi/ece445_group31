@@ -10,7 +10,8 @@ Initial live testing clustered scores too tightly (15-40). I updated `live_infer
 2. **Logical Base Score (60%):** Heuristic baseline that penalizes high PERCLOS and rewards productive apps (e.g., VS Code) even if keystrokes drop while reading code.
 3. **EMA Smoothing:** An Exponential Moving Average filter applied to the blended score to prevent erratic UI and hardware jumps.
 
-Current Status: The model now outputs a wider, accurate score distribution. Minor tuning will continue during real-world use.
+Current Status: The model now outputs a wider, accurate score distribution. Minor tuning will continue during real-world use
+
 --------
 
 # Lab Notebook - 10/16/2026
