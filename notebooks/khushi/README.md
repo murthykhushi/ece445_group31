@@ -1,4 +1,4 @@
-# Lab Notebook - 10/16/2026
+# Lab Notebook - 10/19/2026
 
 **Topic:** Data Collection, Model Training & Live Iterations
 
@@ -29,6 +29,9 @@ This portion bridges the core software architecture and machine learning pipelin
 * **`vision_pipeline.py`**: Called by the main scripts to process webcam frames using MediaPipe, calculating Eye Aspect Ratio (EAR) and rolling Percentage of Eye Closure (PERCLOS).
 * **`desktop_pipeline.py`**: Called by the main scripts to asynchronously track keystroke volume, mouse clicks, and the active macOS application using background threads.
 ---
+
+# Lab Notebook - 10/11/2026
+**Topic:** ## Post Design Review Complexity Iterations
 
 Goals: 
 * Following design review feedback, we have decided to come up with additional software complexities for this project so that we have more ownership, originality, and market competetiveness.
