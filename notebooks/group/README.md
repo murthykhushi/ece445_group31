@@ -184,7 +184,7 @@ The pipeline uses a `scikit-learn` Random Forest Regressor. This keeps backgroun
 To get the model working, you need to collect ground-truth data so it learns what your specific focus habits look like.
 
 1. **Run the data logger.** The script will run in the background and automatically prompt you every 60 seconds to self-report your current focus score. 
-2. **Vary your states.** For a highly accurate model, ensure you log data across different mindsets: high focus (intense coding), medium focus (reading docs), and low focus (casual scrolling, taking a break).
+2. **Vary states.** For a highly accurate model, ensure you log data across different mindsets: high focus (intense coding), medium focus (reading docs), and low focus (casual scrolling, taking a break).
 3. **Hit your data targets.** Aim for about 3 hours of logged data (~180 pings) to validate your proof-of-concept. To establish a robust, personalized baseline, you will eventually want to collect 1,000 to 2,000 instances (16-32 hours of background running).
 
 ## How to Run Live Inference
