@@ -1,2 +1,4 @@
 # Focus Tamagotchi ML Pipeline
-Run `src/data_logger.py` to begin collecting experience sampling (ESM) ground-truth labels alongside your 2.0-second sliding window telemetry.
+1. **Collect:** Run `collect_data.py` to log ground-truth focus labels and 60-second rolling telemetry
+2. **Train:** Run `train_real.py` to build your personalized model from the collected data
+3. **Infer:** Run `live_inference.py` to start real-time focus tracking
