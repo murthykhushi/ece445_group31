@@ -1,34 +1,35 @@
 import time
-import threading
 from pynput import keyboard, mouse
-# AppKit requires pyobjc to be installed on Mac
+
 try:
     from AppKit import NSWorkspace
 except ImportError:
     NSWorkspace = None
-    print("Warning: AppKit not found. Run 'pip install pyobjc' to track active apps.")
+    print("AppKit not found. 'pyobjc' is required to track active apps.")
 
 class DesktopPipeline:
     def __init__(self, window_sec=60):
         self.window_sec = window_sec
         self.keystrokes = []
         self.mouse_clicks = []
-        
-        # Start background listeners
+
+        # Instead of using polling, we use threads for keyboard and mouse so we dont miss inputs
+        # These record timestamps when events happen 
         self.k_listener = keyboard.Listener(on_press=self.on_press)
         self.m_listener = mouse.Listener(on_click=self.on_click)
         self.k_listener.start()
         self.m_listener.start()
 
-        # Update this dictionary to match exactly how you encoded apps during training!
+        # Associate most commonly used apps / apps found in training data with numerical values 
         self.app_encoder = {
             "Google Chrome": 1,
-            "Code": 2,          # VS Code usually shows up as "Code"
+            "Code": 2,
             "Terminal": 3,
             "Safari": 4,
-            "Unknown": 0        # Default fallback
+            "Unknown": 0
         }
 
+    # Different measurements needed for the desktop portion of pipeline 
     def on_press(self, key):
         self.keystrokes.append(time.time())
 
@@ -45,13 +46,10 @@ class DesktopPipeline:
     def get_current_metrics(self):
         current_time = time.time()
         
-        # Filter events to only keep those within the last 60 seconds
         self.keystrokes = [t for t in self.keystrokes if current_time - t <= self.window_sec]
         self.mouse_clicks = [t for t in self.mouse_clicks if current_time - t <= self.window_sec]
         
         active_app_name = self.get_active_app()
-        
-        # Convert the app name to a number for the Machine Learning model
         encoded_app = self.app_encoder.get(active_app_name, 0)
         
         return {
