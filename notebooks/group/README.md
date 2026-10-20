@@ -167,34 +167,25 @@ Notebook Entry Description:
 
 # Lab Notebook - 10/17/2026
 
-**Topic:** Notes on new ML training etc...
+**Topic:** ML Pipeline
 **Author:** Khushi Murthy
 ---
 
-# 🧠 ML Focus Prediction Pipeline
+This pipeline uses a machine learning model to predict your real-time cognitive focus on a scale of 0-100. It fuses webcam vision data with OS-level desktop telemetry to drive a physical desk peripheral, replacing the old hardcoded heuristic scoring.
 
-This project replaces static heuristic focus scoring with a data-driven supervised machine learning model. By fusing visual data (via webcam) with OS-level telemetry, we predict real-time cognitive focus (0-100) to drive a physical desk peripheral without requiring specialized hardware like IR eye-trackers.
+## How it Works
+The system aggregates your telemetry into 60-second rolling windows to feed the model:
+* **Vision:** Eye Aspect Ratio (EAR), Percentage of Eye Closure (PERCLOS), and a binary check for if your eyes are closed.
+* **Desktop:** The currently active application (integer encoded), plus raw keystroke and mouse click counts to differentiate between active work (typing) and passive work (reading/watching).
 
-## 📊 1. Feature Pipeline (X-Data)
-Telemetry is aggregated into non-overlapping **60-second time windows**:
-- **Visual Fatigue:** EAR (Eye Aspect Ratio) and PERCLOS (Percentage of Eye Closure) via facial landmarks.
-- **Eye State:** Binary classification indicating if eyes are closed during the polling instant.
-- **Active Application:** Integer-encoded mapping of the currently focused desktop window.
-- **Input Activity:** Aggregate counts of keystrokes and mouse clicks to distinguish active generation (coding) from passive consumption (reading/watching).
+The pipeline uses a `scikit-learn` Random Forest Regressor. This keeps background CPU usage safely under 10% during live inference and handles the mix of continuous vision data and categorical application data perfectly.
 
-## 🎯 2. Ground-Truth Collection Protocol (Y-Data)
-To supervise training, continuous labels (`Y ∈ [0, 100]`) are collected using an automated Experience Sampling Method (ESM):
-- **Automated Prompting:** A background script triggers an alert every 60 seconds, prompting the user to self-report their perceived focus score.
-- **Structured Variance:** Data collection is deliberately distributed across three states to prevent model skew:
-  - *High-Focus:* Active coding, heavy typing.
-  - *Medium-Focus:* Passive work (reading documentation, watching tutorials).
-  - *Low-Focus:* Intentional distraction, casual scrolling, and leaning away from the monitor.
+## How to Train the Model
+To get the model working, you need to collect ground-truth data so it learns what your specific focus habits look like.
 
-## 🤖 3. Model Architecture
-- **Model Selection:** `scikit-learn` Random Forest Regressor.
-- **Rationale:** Fast inference keeps host CPU utilization safely below 10% while naturally handling the mix of continuous (EAR) and categorical (App ID) data streams.
+1. **Run the data logger.** The script will run in the background and automatically prompt you every 60 seconds to self-report your current focus score. 
+2. **Vary your states.** For a highly accurate model, ensure you log data across different mindsets: high focus (intense coding), medium focus (reading docs), and low focus (casual scrolling, taking a break).
+3. **Hit your data targets.** Aim for about 3 hours of logged data (~180 pings) to validate your proof-of-concept. To establish a robust, personalized baseline, you will eventually want to collect 1,000 to 2,000 instances (16-32 hours of background running).
 
-## 📈 4. Volume Targets & Milestones
-- **Sampling Rate:** 1 feature vector logged every 60 seconds.
-- **Proof-of-Concept (POC):** ~180 labeled instances (3 hours of collection) to validate the end-to-end ML pipeline and verify feature importance.
-- **Production Target:** 1,000 to 2,000 instances (~16-32 hours) per user to establish a robust, personalized baseline.
+## How to Run Live Inference
+Once model is trained and saved, run `live_inference.py`. This script loads your personalized Random Forest model and begins real-time tracking in the background. It predicts your focus every 60 seconds, applies an EMA smoothing filter to prevent erratic jumping, and outputs the final blended score to drive your hardware peripheral.
