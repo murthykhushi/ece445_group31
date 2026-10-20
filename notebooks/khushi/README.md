@@ -1,64 +1,32 @@
-# Lab Notebook - 10/19/2026
-**Topic:** Tuning the ML model & Applying it
----
+# Lab Notebook - 10/16/2026
 
-**Summary**: Added more data using the data collection script, which recorded ear,perclos,is_closed,active_app,keystrokes,mouse_clicks,focus_score. When we trained the data, we got goodfeedback and a large distribution of data points, R^2 == 99.9%. However, I had to iterate on the live script 
+**Topic:** Data Collection, Model Training & Live Iterations
 
-To solve this, `live_inference.py` uses a **Hybrid Scoring System** that blends machine learning with rule-based heuristics:
+Completed a 2-hour data session capturing three focus states: "locked in," zero focus, and mixed. The logger recorded all 6 features alongside the `focus_score`. The baseline Random Forest model trained on this cleaned data achieved an $R^2$ of 99.9%.
 
-1.  **ML Score (40%):** The Random Forest prediction based on the user's personalized training data. Highly responsive to active input.
-2.  **Logical Base Score (60%):** A heuristic baseline that prevents observation bias. It applies severe penalties for high PERCLOS/closed eyes and rewards productive active applications (e.g., VS Code) even if keystrokes drop to zero.
-3.  **EMA Smoothing:** A 1D Kalman-style filter (Exponential Moving Average) is applied to the final blended score to prevent rapid, erratic jumping in the UI (and eventually, the hardware peripheral).
+**Live Inference Iterations**
+Initial live testing clustered scores too tightly (15-40). I updated `live_inference.py` to use a hybrid scoring system:
+1. **ML Score (40%):** Personalized Random Forest prediction; highly responsive to active input.
+2. **Logical Base Score (60%):** Heuristic baseline that penalizes high PERCLOS and rewards productive apps (e.g., VS Code) even if keystrokes drop while reading code.
+3. **EMA Smoothing:** An Exponential Moving Average filter applied to the blended score to prevent erratic UI and hardware jumps.
 
-Before making this change: The model was stuck at scores around 15 - 40. 
-After making this change: The model was able to have a wider span of scores, but still needs some tweaking.
-
-# Lab Notebook - 10/17/2026
-
-**Topic:** Focus State Data Collection & Model Training
-
----
-
-## Objective
-To build a dataset capturing various states of cognitive focus and train a machine learning model to classify these states. The goal is to reliably distinguish between states of being completely "locked in" (hyper-focused), taking a break (zero focus), and a mixed/intermediate state.
-
-## Methodology: Data Collection
-Completed a deliberate 2-hour data collection session designed to capture a wide variance in focus levels. I intentionally modulated my environment and workflow to cycle through three distinct cognitive states:
-
-*   **Hyper-Focused ("Locked In"):** Intense concentration, deep work, and zero external distractions.
-*   **Zero Focus (Breaks):** Intentional disengagement, relaxed state, and unstructured attention.
-*   **Mixed Focus:** Casual task execution with standard contextual switching and average attention span. 
-
-## Current Status
-*  COMPLETE:  **Data Gathering Complete:** 2 hours of raw telemetry/data successfully recorded and stored.
-*  IN PROGRESS: **Phase Transition:** Moving from the data collection phase into the model training phase.
-
-## Next Steps for Model Training
-1.  **Data Preprocessing:** Clean the raw data, handle any missing values, and normalize the inputs.
-2.  **Labeling & Windowing:** Segment the 2-hour continuous stream into discrete time windows mapped accurately to the specific focus state (Hyper-focused, Zero focus, Mixed).
-3.  **Feature Engineering:** Extract relevant statistical or frequency-domain features from the raw data windows to feed into the model.
-4.  **Baseline Model Training:** Train an initial classifier (e.g., Random Forest, SVM, or a lightweight Neural Network) to establish baseline accuracy.
-5.  **Evaluation & Tuning:** Evaluate the model against a validation split and tune hyperparameters to improve the distinction between the "Mixed" and "Locked In" states.
-
+**Current Status:** The model now outputs a wider, accurate score distribution. Minor tuning will continue during real-world use.
+--------
 
 # Lab Notebook - 10/16/2026
 
-**Topic:** Software & ML Pipeline Initialization
-**Author:** Khushi Murthy
+**Topic:** ## Architecture & ML Pipeline Initialization
 
-**Objectives:** Scaffold the core software architecture and machine learning pipeline components to transition the desktop companion from a heuristic formula to a data-driven Random Forest regression model.
+This portion bridges the core software architecture and machine learning pipeline to transition the desktop companion from a basic heuristic formula to a data-driven Random Forest regression model.
 
-### File Summary
-* **`data_logger.py`**: Background script using OS hooks and ESM pop-ups to capture peripheral telemetry and user-labeled focus scores into synchronized CSV datasets.
-* **`train_model.py` (Script 1)**: Supervised learning script that aggregates logged CSVs, performs feature encoding, trains a Random Forest Regressor, and serializes the model binary.
-* **`train_model.py` (Script 2)**: Supplementary training script variant configured for iterative feature engineering and performance evaluation ($R^2$ and MAE).
-* **`live_inference.py`**: Live execution script that loads the trained model, smooths predictions via a 1D Kalman Filter, and streams focus scores over serial to the STM32 microcontroller.
+### Core Scripts
+* **`data_logger.py`**: This is the file that captures the data for the model. It runs in the background to capture peripheral telemetry and self-reported focus scores via UI pop-ups, saving them to synchronized CSVs.
+* **`train_model.py`**: Supervised learning script that ingests the logged CSVs, performs feature encoding, trains the Random Forest Regressor, and saves the serialized model binary.
+* **`live_inference.py`**: The live execution script that loads the trained model, smooths the predictions via an EMA filter, and streams the final focus scores over serial to the STM32 microcontroller.
 
-# Lab Notebook - 10/14/2026
-
-**Topic:** Additional Complexity Ideation 
-**Author:** Khushi Murthy
-
+### Sensor Modules
+* **`vision_pipeline.py`**: Called by the main scripts to process webcam frames using MediaPipe, calculating Eye Aspect Ratio (EAR) and rolling Percentage of Eye Closure (PERCLOS).
+* **`desktop_pipeline.py`**: Called by the main scripts to asynchronously track keystroke volume, mouse clicks, and the active macOS application using background threads.
 ---
 
 Goals: 
