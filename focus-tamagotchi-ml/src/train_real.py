@@ -1,19 +1,30 @@
 import pandas as pd
-from sklearn.ensemble import RandomForestRegressor
 import joblib
+import os
+from sklearn.ensemble import RandomForestRegressor
 
-print("Loading real training data...")
-# Load your collected data
-df = pd.read_csv("data/real_training_data.csv")
+def train_real_model():
+    # My output csv at this path 
+    data_path = "data/real_training_data.csv"
+    
+    if not os.path.exists(data_path):
+        print(f"Error: Data file not found at {data_path}. Please run the data collection script first.")
+        return
 
-# Split features (X) and your focus score (y)
-X = df[['ear', 'perclos', 'is_closed', 'active_app', 'keystrokes', 'mouse_clicks']]
-y = df['focus_score']
+    df = pd.read_csv(data_path)
 
-print(f"Training personalized Random Forest Regressor on {len(df)} data points...")
-model = RandomForestRegressor(n_estimators=100, random_state=42)
-model.fit(X, y)
+    # x = raw data, y = my input score
+    features = ['ear', 'perclos', 'is_closed', 'active_app', 'keystrokes', 'mouse_clicks']
+    X = df[features]
+    y = df['focus_score']
 
-# Save the real model
-joblib.dump(model, "focus_real_model.pkl")
-print("Success! Personalized model saved to focus_real_model.pkl")
+    # running model on it 
+    model = RandomForestRegressor(n_estimators=100, random_state=42)
+    model.fit(X, y)
+
+    model_filename = "focus_real_model.pkl"
+    joblib.dump(model, model_filename)
+    print(f"Personalized model trained on {len(df)} samples and saved to {model_filename}")
+
+if __name__ == "__main__":
+    train_real_model()
