@@ -1,3 +1,17 @@
+**9/18 - Machine Shop Conversation**
+
+Met with Gregg at the machine shop to get advice on the physical housing and PCB layout:
+
+Board Layout: Keep PCB footprint around 4" x 4" with standard 1/8" mounting holes. Put all I/O connectors on the same edge to keep wiring tidy.
+Ports & Controls: Use remote/panel-mount buttons and a remote USB plug so we don't have to align board components directly against the enclosure walls.
+Enclosure: Since the shop doesn't do 3D printing and machining an animal shape is impractical, use a stuffed animal plushie to hold the core electronics box.
+Feedback & Lighting: Add a simple buzzer and vibration motor for quick haptic/audio alerts (like an alarm clock). Place LEDs along the bottom for an underglow look rather than bare front-facing LEDs.
+Next Steps:
+
+Update KiCad outline to 4" x 4" with 1/8" corner holes and single-edge I/O grouping.
+Source panel-mount buttons, a remote USB extension, and a suitable plushie.
+
+
 **10/16 - Design Review Feedback and Improvements**
 
 During our design review, we received feedback that our project needed more technical complexity. Since our hardware design is relatively straightforward and we are all Computer Engineering students, we decided to focus on improving the software side of our project.
