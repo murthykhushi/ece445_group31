@@ -1,3 +1,4 @@
+from pathlib import Path
 import cv2
 import time
 import pandas as pd
@@ -12,7 +13,8 @@ def collect_data():
     desktop = DesktopPipeline()
     
     cap = cv2.VideoCapture(0)
-    csv_filename = "real_training_data.csv"
+    csv_filename = Path(__file__).resolve().parents[1] / "data" / "real_training_data.csv"
+    csv_filename.parent.mkdir(parents=True, exist_ok=True)
     
     # Initialize CSV if it doesn't exist
     if not os.path.exists(csv_filename):
@@ -81,6 +83,8 @@ def collect_data():
         elif key == ord('q'):
             break
 
+    desktop.close()
+    vision.detector.close()
     cap.release()
     cv2.destroyAllWindows()
     print("Collection stopped.")

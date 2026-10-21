@@ -1,3 +1,4 @@
+from pathlib import Path
 import cv2
 import mediapipe as mp
 from mediapipe.tasks import python
@@ -20,7 +21,7 @@ class VisionPipeline:
         self.RIGHT_EYE = [362, 385, 387, 263, 373, 380]
 
         # Download model bundle if needed
-        self.model_path = 'face_landmarker.task'
+        self.model_path = str(Path(__file__).resolve().parents[1] / 'face_landmarker.task')
         if not os.path.exists(self.model_path):
             print("Downloading MediaPipe FaceLandmarker task file...")
             url = "https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/latest/face_landmarker.task"

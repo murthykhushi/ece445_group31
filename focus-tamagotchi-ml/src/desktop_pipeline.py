@@ -14,7 +14,7 @@ elif current_os == 'win32':
     try:
         import win32gui
     except ImportError:
-        NSWorkspace = None
+        win32gui = None
         print("win32gui not found. 'pywin32' is required for Windows.")
 elif current_os.startswith('linux'):
     # TODO: Add Linux support in the future
@@ -41,6 +41,14 @@ class DesktopPipeline:
             "Safari": 4,
             "Unknown": 0
         }
+
+    def reset_metrics(self):
+        self.keystrokes.clear()
+        self.mouse_clicks.clear()
+
+    def close(self):
+        self.k_listener.stop()
+        self.m_listener.stop()
 
     # Different measurements needed for the desktop portion of pipeline 
     def on_press(self, key):

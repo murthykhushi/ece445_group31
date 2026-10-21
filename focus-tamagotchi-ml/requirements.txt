@@ -5,3 +5,6 @@ pandas
 numpy
 pyserial
 pynput
+joblib
+pyobjc-framework-Cocoa; sys_platform == "darwin"
+pywin32; sys_platform == "win32"
