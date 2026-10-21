@@ -29,3 +29,7 @@ Next Steps
 Based on the feedback, we plan to focus on developing an ML-based focus scoring system and improving our computer vision pipeline. We will collect training data, evaluate our model against the original scoring equation, and benchmark CPU usage and processing latency.
 
 Takeaway: adding features alone does not necessarily increase engineering complexity, we need to quantify improvements and ensure our hardware and software work together reliably as a baseline
+
+**10/18 - Fixing the software package**
+
+Set up Noah’s software on my Mac using a Python virtual environment and installed the missing dependencies. Fixed inconsistent file paths and a missing reset method that would crash live inference. Updated the setup instructions and tested the camera, eye tracking, active-app detection, keyboard tracking, and focus predictions over two cycles and recorded those as part of training data. Windows compatibility fixes were included but still need testing with noah. Pushed the changes to michael-dev.
