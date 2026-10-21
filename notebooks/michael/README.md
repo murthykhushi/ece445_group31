@@ -1,4 +1,4 @@
-10/16 - Design Review Feedback and Improvements
+**10/16 - Design Review Feedback and Improvements**
 
 During our design review, we received feedback that our project needed more technical complexity. Since our hardware design is relatively straightforward and we are all Computer Engineering students, we decided to focus on improving the software side of our project.
 
@@ -28,4 +28,4 @@ Next Steps
 
 Based on the feedback, we plan to focus on developing an ML-based focus scoring system and improving our computer vision pipeline. We will collect training data, evaluate our model against the original scoring equation, and benchmark CPU usage and processing latency.
 
-Our main takeaway is that adding features alone does not necessarily increase engineering complexity. We need to demonstrate measurable improvements and ensure our hardware and software work together reliably.
+Takeaway: adding features alone does not necessarily increase engineering complexity, we need to quantify improvements and ensure our hardware and software work together reliably as a baseline
