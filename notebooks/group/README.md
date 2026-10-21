@@ -189,3 +189,11 @@ To get the model working, you need to collect ground-truth data so it learns wha
 
 ## How to Run Live Inference
 Once model is trained and saved, run `live_inference.py`. This script loads your personalized Random Forest model and begins real-time tracking in the background. It predicts your focus every 60 seconds, applies an EMA smoothing filter to prevent erratic jumping, and outputs the final blended score to drive your hardware peripheral.
+
+# Lab Notebook - 10/18/2026
+
+**Topic:** Pipeline Package Repair + Data Collection & Testing
+**Author:** Michael Yang
+---
+
+Fixed inconsistent file paths and a missing reset method that would crash live inference. Updated the setup instructions and tested the camera, eye tracking, active-app detection, keyboard tracking, and focus predictions while adding to the training data collection. Windows compatibility fixes were included but still need testing w/ Noah. Pushed the changes to michael-dev.
