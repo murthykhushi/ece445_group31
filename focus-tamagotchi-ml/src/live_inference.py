@@ -1,12 +1,14 @@
+from pathlib import Path
 import cv2
 import time
 import joblib
+import pandas as pd
 import os
 from vision_pipeline import VisionPipeline
 from desktop_pipeline import DesktopPipeline
 
 # Configuration
-MODEL_PATH = "focus_real_model.pkl"
+MODEL_PATH = Path(__file__).resolve().parents[1] / "focus_real_model.pkl"
 POLL_INTERVAL_SEC = 60
 SMOOTHING_FACTOR = 0.3
 
@@ -66,7 +68,7 @@ def main():
             ]]
             
             # 1. Get raw prediction from the Random Forest
-            raw_ml_score = model.predict(X_live)[0]
+            raw_ml_score = model.predict(pd.DataFrame(X_live, columns=model.feature_names_in_))[0]
             
             # 2. Calculate a heuristic baseline as a safety net
             base_score = 50.0 
@@ -98,6 +100,8 @@ def main():
             break
 
     # Cleanup
+    desktop.close()
+    vision.detector.close()
     cap.release()
     cv2.destroyAllWindows()
     print("Inference stopped.")

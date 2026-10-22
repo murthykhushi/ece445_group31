@@ -1,11 +1,24 @@
 import time
+import sys
 from pynput import keyboard, mouse
 
-try:
-    from AppKit import NSWorkspace
-except ImportError:
-    NSWorkspace = None
-    print("AppKit not found. 'pyobjc' is required to track active apps.")
+current_os = sys.platform
+
+if current_os == 'darwin':
+    try:
+        from AppKit import NSWorkspace
+    except ImportError:
+        NSWorkspace = None
+        print("AppKit not found. 'pyobjc' is required for MacOS.")
+elif current_os == 'win32':
+    try:
+        import win32gui
+    except ImportError:
+        win32gui = None
+        print("win32gui not found. 'pywin32' is required for Windows.")
+elif current_os.startswith('linux'):
+    # TODO: Add Linux support in the future
+    pass
 
 class DesktopPipeline:
     def __init__(self, window_sec=60):
@@ -29,6 +42,14 @@ class DesktopPipeline:
             "Unknown": 0
         }
 
+    def reset_metrics(self):
+        self.keystrokes.clear()
+        self.mouse_clicks.clear()
+
+    def close(self):
+        self.k_listener.stop()
+        self.m_listener.stop()
+
     # Different measurements needed for the desktop portion of pipeline 
     def on_press(self, key):
         self.keystrokes.append(time.time())
@@ -38,10 +59,31 @@ class DesktopPipeline:
             self.mouse_clicks.append(time.time())
 
     def get_active_app(self):
-        if NSWorkspace is None:
-            return "Unknown"
-        active_app = NSWorkspace.sharedWorkspace().activeApplication()
-        return active_app['NSApplicationName'] if active_app else "Unknown"
+        app_name = "Unknown"
+
+        if current_os == 'darwin' and NSWorkspace:
+            active_app = NSWorkspace.sharedWorkspace().activeApplication()
+            if active_app:
+                app_name = active_app['NSApplicationName']
+
+        elif current_os == 'win32' and win32gui:
+            window = win32gui.GetForegroundWindow()
+            if window:
+                window_title = win32gui.GetWindowText(window)
+                if "Chrome" in window_title:
+                    app_name = "Google Chrome"
+                elif "Code" in window_title or "Visual Studio" in window_title:
+                    app_name = "Code"
+                elif "Terminal" in window_title or "PowerShell" in window_title or "cmd" in window_title.lower():
+                    app_name = "Terminal"
+                else:
+                    app_name = window_title
+
+        elif current_os.startswith('linux'):
+            # TODO: Add Linux support in the future
+            pass
+
+        return app_name
 
     def get_current_metrics(self):
         current_time = time.time()

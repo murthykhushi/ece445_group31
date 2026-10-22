@@ -1,5 +1,16 @@
 # Noah's Lab Notebook
 
+## 10/20
+
+### Objectives:
+- Meet as a team to discuss work distribution and POA for the next week
+- Complete any work as discussed during the team meeting
+
+### What was done:
+We met as a team to talk about what work we needed to do over the next week. Michael would help out with any software as needed like finetuning but focus on making updates to the PCB, Khushi would continue working in the repository she started, and I would add Windows device compatibility and test locally. 
+
+As I began testing, I noticed a few things were off, such as the OS compatibility issue. I solved that by checking the `sys` format and downloading the respective package and using it based on the check. The next issue I found was an `AttributeError: module 'mediapipe' has no attribute 'solutions'`. I discovered that the code was using an outdated package via the Google AI Edge API. By reading through documentation at the [Google API Docs](https://developers.google.com/edge/mediapipe/solutions/vision/face_landmarker/python), I was able to update the existing code and successfully ran the program locally.
+
 ## 10/12
 
 ### Objectives:
