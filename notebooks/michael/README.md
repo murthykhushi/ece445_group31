@@ -47,3 +47,66 @@ Takeaway: adding features alone does not necessarily increase engineering comple
 **10/18 - Fixing the software package**
 
 Set up Noah’s software on my Mac using a Python virtual environment and installed the missing dependencies. Fixed inconsistent file paths and a missing reset method that would crash live inference. Updated the setup instructions and tested the camera, eye tracking, active-app detection, keyboard tracking, and focus predictions over two cycles and recorded those as part of training data. Windows compatibility fixes were included but still need testing with noah. Pushed the changes to michael-dev.
+
+**10/22 - Machine Shop Conversation**
+Date: October 20, 2026
+
+1. Enclosure and PCB
+
+we discussed the enclosure we plan to use, which measures approximately 7.2 × 5 × 2.2 inches.
+
+The machine shop said the enclosure should work as long as the PCB and other components fit inside.
+
+They reminded me that these are external dimensions, so I need to account for approximately 1–2 mm of wall thickness.
+
+showed them the PCB layout, and they said the mounting holes looked fine from a mechanical standpoint. However, they couldn't verify the electrical design.
+
+We sent the enclosure product link to the machine shop to order
+
+2. Screen Placement
+
+We discussed whether the screen should be mounted on the removable lid or the main enclosure body.
+
+recommended prioritizing accessibility, since we'll likely need to troubleshoot the PCB more often than the screen.
+
+We discussed keeping the screen fixed so we can remove the lid and easily access the PCB without disturbing the display.
+
+The screen can potentially be glued into place after the necessary opening is cut into the enclosure.
+
+3. Ultrasonic Sensor and Servo
+
+I explained that the ultrasonic sensor would be placed on top of the stuffed animal to detect when someone moves their hand over it, simulating petting.
+
+The sensor will connect to the PCB through wires rather than being mounted directly onto the board.
+
+I also explained that the servo will control a tail-wagging mechanism.
+
+Since our previous servo stopped working, I need to order a replacement and test the mechanism.
+
+4. Screen Shipping and Project Timeline
+
+I mentioned that our screen was being shipped from overseas, with an estimated delivery time of around 10 days.
+
+The technician warned that overseas delivery estimates can be unreliable, especially without confirmed tracking information.
+
+I found a similar screen on Amazon that costs more but could arrive sooner. I plan to look into ordering it as a backup.
+
+The machine shop also has a large backlog of research and senior design projects, so they may not be able to start immediately after our parts arrive.
+
+The technician emphasized that if our screen arrives too late, there may not be enough time to finish fabrication before the demo.
+
+5. Next Steps
+
+Send the enclosure link to the machine shop for ordering.
+
+Confirm the PCB fits inside the enclosure.
+
+Order a replacement servo.
+
+Look into purchasing the screen from Amazon.
+
+Finalize the screen mounting position and tail-wagging mechanism.
+
+Bring all physical components to the machine shop so we can begin fitting and fabricating the enclosure.
+
+
