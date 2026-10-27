@@ -1,8 +1,21 @@
+# Lab Notebook - 10/27/2026
+
+**Topic:** Data Collection, Model Training & Live Iterations (Part 2) 
+
+Logged a mathematically balanced dataset of 40 additional samples to inject contrast between high-focus coding sessions and low-focus distracted states. Training on this updated dataset improved model accuracy significantly, achieving an $R^2$ score of 0.52 and a Mean Absolute Error of 17.16. Extracted feature importances confirmed the Random Forest model successfully fuses physical engagement (keystrokes weighted at 54.4%) with visual fatigue (PERCLOS weighted at 21.6%).
+
+**Live Inference & Validation**
+When testing live, performance accuracy increased noticeably, particularly in identifying outlier scores. 
+1. **Dynamic Range:** The model is much better at capturing extreme variance. Previously, predictions were clustered around average values, but the system now accurately outputs scores lower than 20 and higher than 80.
+2. **Architecture Validation:** The accurate distribution and expected feature weights validate that the pipeline logic is sound.
+
+
+
 # Lab Notebook - 10/19/2026
 
 **Topic:** Data Collection, Model Training & Live Iterations
 
-Completed a 2-hour data session capturing three focus states: "locked in," zero focus, and mixed. The logger recorded all 6 features alongside the `focus_score`. The baseline Random Forest model trained on this cleaned data achieved an $R^2$ of 99.9%.
+Completed a 2-hour data session capturing three focus states: "locked in," zero focus, and mixed. The logger recorded all 6 features alongside the `focus_score`. The baseline Random Forest model trained on this cleaned data achieved an $R^2$ of ~4% (values were changing though).
 
 **Live Inference Iterations**
 Initial live testing clustered scores too tightly (15-40). I updated `live_inference.py` to use a hybrid scoring system:
