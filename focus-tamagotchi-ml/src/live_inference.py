@@ -4,6 +4,8 @@ import time
 import joblib
 import pandas as pd
 import os
+import psutil
+import csv
 from vision_pipeline import VisionPipeline
 from desktop_pipeline import DesktopPipeline
 
@@ -11,14 +13,13 @@ from desktop_pipeline import DesktopPipeline
 MODEL_PATH = Path(__file__).resolve().parents[1] / "focus_real_model.pkl"
 POLL_INTERVAL_SEC = 60
 SMOOTHING_FACTOR = 0.3
+LOG_INTERVAL_SEC = 1.0  # New: Throttle standard logging to 1x per second
 
 def main():
-    # Check for pre-trained model
     if not os.path.exists(MODEL_PATH):
         print(f"Error: {MODEL_PATH} not found. Train the model first.")
         return
 
-    # Load the serialized model and initialize sensor pipelines
     print("Loading focus model...")
     model = joblib.load(MODEL_PATH)
     
@@ -27,23 +28,30 @@ def main():
     desktop = DesktopPipeline()
     cap = cv2.VideoCapture(0)
     
+    csv_file = open('telemetry_log.csv', mode='w', newline='')
+    writer = csv.writer(csv_file)
+    writer.writerow(["Timestamp", "CPU_Percent", "RAM_Percent", "Loop_Time_ms", "Full_Inference_Triggered"])
+    psutil.cpu_percent(interval=None)
+
     last_poll_time = time.time()
+    last_log_time = time.time()  # New: Track when we last wrote to the CSV
     smoothed_score = None
 
     print(f"Live inference started. Predicting every {POLL_INTERVAL_SEC}s. Press 'q' to quit.\n")
 
     while cap.isOpened():
+        loop_start = time.time()
+        full_inference_triggered = False
+
         ret, frame = cap.read()
         if not ret:
             break
 
-        # Process vision continuously to maintain an accurate PERCLOS rolling history
         face_metrics = vision.process_frame(frame)
         
         current_time = time.time()
         time_left = int(POLL_INTERVAL_SEC - (current_time - last_poll_time))
         
-        # Update UI overlay
         cv2.putText(frame, f"Predicting in: {time_left}s | 'q' to quit", 
                     (20, 40), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 255, 255), 2)
         
@@ -53,11 +61,10 @@ def main():
 
         cv2.imshow("Live Inference", frame)
 
-        # Trigger inference when the polling interval is reached
         if time_left <= 0:
+            full_inference_triggered = True
             desktop_metrics = desktop.get_current_metrics()
             
-            # Bundle current metrics. Array order must match the training CSV exactly.
             X_live = [[
                 face_metrics['ear'],
                 face_metrics['perclos'],
@@ -67,22 +74,18 @@ def main():
                 desktop_metrics['mouse_clicks']
             ]]
             
-            # 1. Get raw prediction from the Random Forest
             raw_ml_score = model.predict(pd.DataFrame(X_live, columns=model.feature_names_in_))[0]
             
-            # 2. Calculate a heuristic baseline as a safety net
             base_score = 50.0 
             if face_metrics['is_closed'] == 1 or face_metrics['perclos'] > 0.4:
-                base_score = 10.0  # Heavy penalty for closed eyes/fatigue
+                base_score = 10.0
             elif desktop_metrics['active_app_encoded'] == 1:
-                base_score = 75.0  # Reward for being in a productive application
+                base_score = 75.0
             else:
                 base_score = 40.0
                 
-            # 3. Ensemble: Blend ML prediction with heuristic baseline (60% logic / 40% ML)
             hybrid_score = (base_score * 0.6) + (raw_ml_score * 0.4)
             
-            # 4. Apply Exponential Moving Average (EMA) to prevent erratic UI jumps
             if smoothed_score is None:
                 smoothed_score = hybrid_score
             else:
@@ -91,15 +94,24 @@ def main():
             print(f"App: {desktop_metrics['active_app_name']} | Keys: {desktop_metrics['keystrokes']} | PERCLOS: {face_metrics['perclos']:.2f}")
             print(f"Logic: {base_score} | ML: {raw_ml_score:.1f} | Final: {smoothed_score:.1f}\n")
             
-            # Reset polling timer and flush the 60s desktop event buffer
             last_poll_time = time.time()
             desktop.reset_metrics()
 
-        # Exit condition
+        # --- THROTTLED LOGGING ---
+        # Only log if 1 second has passed OR if the heavy ML inference just triggered
+        current_time = time.time()
+        if full_inference_triggered or (current_time - last_log_time >= LOG_INTERVAL_SEC):
+            loop_time_ms = (current_time - loop_start) * 1000
+            cpu_usage = psutil.cpu_percent(interval=None)
+            ram_usage = psutil.virtual_memory().percent
+            
+            writer.writerow([current_time, cpu_usage, ram_usage, loop_time_ms, full_inference_triggered])
+            last_log_time = current_time
+
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
 
-    # Cleanup
+    csv_file.close()
     desktop.close()
     vision.detector.close()
     cap.release()
