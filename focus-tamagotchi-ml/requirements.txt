@@ -1,10 +1,12 @@
-scikit-learn
-mediapipe
+# Universal Requirements
 opencv-python
-pandas
-numpy
-pyserial
+mediapipe
 pynput
+pandas
+psutil
+scikit-learn
 joblib
-pyobjc-framework-Cocoa; sys_platform == "darwin"
-pywin32; sys_platform == "win32"
+
+# OS-Specific Requirements (Environment Markers)
+pywin32; sys_platform == 'win32'
+pyobjc-framework-Cocoa; sys_platform == 'darwin'

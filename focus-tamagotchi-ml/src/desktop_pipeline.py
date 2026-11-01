@@ -4,21 +4,19 @@ from pynput import keyboard, mouse
 
 current_os = sys.platform
 
+# Safe Cross-Platform Imports
 if current_os == 'darwin':
     try:
         from AppKit import NSWorkspace
     except ImportError:
         NSWorkspace = None
-        print("AppKit not found. 'pyobjc' is required for MacOS.")
+        print("Warning: macOS detected but AppKit not found. Run: pip install pyobjc")
 elif current_os == 'win32':
     try:
         import win32gui
     except ImportError:
         win32gui = None
-        print("win32gui not found. 'pywin32' is required for Windows.")
-elif current_os.startswith('linux'):
-    # TODO: Add Linux support in the future
-    pass
+        print("Warning: Windows detected but win32gui not found. Run: pip install pywin32")
 
 class DesktopPipeline:
     def __init__(self, window_sec=60):
@@ -26,14 +24,13 @@ class DesktopPipeline:
         self.keystrokes = []
         self.mouse_clicks = []
 
-        # Instead of using polling, we use threads for keyboard and mouse so we dont miss inputs
-        # These record timestamps when events happen 
+        # Non-blocking input threads
         self.k_listener = keyboard.Listener(on_press=self.on_press)
         self.m_listener = mouse.Listener(on_click=self.on_click)
         self.k_listener.start()
         self.m_listener.start()
 
-        # Associate most commonly used apps / apps found in training data with numerical values 
+        # Universal Application Encoder
         self.app_encoder = {
             "Google Chrome": 1,
             "Code": 2,
@@ -50,7 +47,6 @@ class DesktopPipeline:
         self.k_listener.stop()
         self.m_listener.stop()
 
-    # Different measurements needed for the desktop portion of pipeline 
     def on_press(self, key):
         self.keystrokes.append(time.time())
 
@@ -61,11 +57,13 @@ class DesktopPipeline:
     def get_active_app(self):
         app_name = "Unknown"
 
+        # macOS active window routing
         if current_os == 'darwin' and NSWorkspace:
             active_app = NSWorkspace.sharedWorkspace().activeApplication()
             if active_app:
                 app_name = active_app['NSApplicationName']
 
+        # Windows active window routing
         elif current_os == 'win32' and win32gui:
             window = win32gui.GetForegroundWindow()
             if window:
@@ -79,15 +77,12 @@ class DesktopPipeline:
                 else:
                     app_name = window_title
 
-        elif current_os.startswith('linux'):
-            # TODO: Add Linux support in the future
-            pass
-
         return app_name
 
     def get_current_metrics(self):
         current_time = time.time()
         
+        # Purge stale events outside the 60s sliding window
         self.keystrokes = [t for t in self.keystrokes if current_time - t <= self.window_sec]
         self.mouse_clicks = [t for t in self.mouse_clicks if current_time - t <= self.window_sec]
         
