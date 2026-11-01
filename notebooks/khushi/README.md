@@ -2,7 +2,7 @@
 # Lab Notebook - 11/1/2026
 **Topic:** CPU / GPU Optimizations 
 
-**Objective**
+**Objective**:
 Optimize the Python live inference pipeline to guarantee host PC CPU utilization remains strictly under the 10% project constraint without compromising the real-time actuation latency of the STM32-controlled servo tail.
 
 **Procedure**
@@ -16,7 +16,7 @@ Optimize the Python live inference pipeline to guarantee host PC CPU utilization
 - The smaller 640x480 frame size inherently reduced the array processing overhead for the Face Mesh landmark extraction.
 - Processor telemetry tracked via psutil confirmed that the Apple M4 Pro CPU utilization remained well below the 10% upper limit during continuous operation.
 
-**Conclusion**
+**Conclusion**:
 The pipeline now successfully satisfies the host PC efficiency requirement through hardware-level resolution downscaling rather than software-level time delays. This setup ensures stable A/B test telemetry for the final project report while maintaining the low-latency response required for the hybrid heuristic/ML focus ensemble.
 
 # Lab Notebook - 10/27/2026
