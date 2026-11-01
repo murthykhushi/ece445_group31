@@ -1,3 +1,24 @@
+
+# Lab Notebook - 11/1/2026
+**Topic:** CPU / GPU Optimizations 
+
+**Objective**
+Optimize the Python live inference pipeline to guarantee host PC CPU utilization remains strictly under the 10% project constraint without compromising the real-time actuation latency of the STM32-controlled servo tail.
+
+**Procedure**
+- Conducted A/B testing on the live_inference.py script comparing baseline execution against software-throttled execution.
+- Identified that an artificial time.sleep() command, initially used to cap the framerate at 15 FPS, was heavily inflating latency metrics (pushing loop times to ~66ms while baseline sat at ~16ms).
+- Removed the artificial framerate sleep command from the optimized execution mode.
+- Replaced the software throttle with native camera resolution downscaling, utilizing OpenCV to drop the webcam capture resolution from 1920x1080 down to 640x480 before feeding arrays into MediaPipe.
+
+**Results**
+- Removing the blocking sleep commands immediately restored real-time responsiveness and loop latency.
+- The smaller 640x480 frame size inherently reduced the array processing overhead for the Face Mesh landmark extraction.
+- Processor telemetry tracked via psutil confirmed that the Apple M4 Pro CPU utilization remained well below the 10% upper limit during continuous operation.
+
+**Conclusion**
+The pipeline now successfully satisfies the host PC efficiency requirement through hardware-level resolution downscaling rather than software-level time delays. This setup ensures stable A/B test telemetry for the final project report while maintaining the low-latency response required for the hybrid heuristic/ML focus ensemble.
+
 # Lab Notebook - 10/27/2026
 
 **Topic:** Data Collection, Model Training & Live Iterations (Part 2) 
