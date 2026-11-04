@@ -1,94 +1,87 @@
-from pathlib import Path
-import cv2
+"""Collect session-separated schema-v2 labels while vision continues in a worker."""
+import argparse
+import csv
+import math
 import time
-import pandas as pd
-import os
-from vision_pipeline import VisionPipeline
-from desktop_pipeline import DesktopPipeline
+import uuid
+from pathlib import Path
+from vision.cli import ROOT, add_vision_arguments, make_pipeline
+from vision.features import FEATURES, SCHEMA_ID, feature_row
+from vision.service import VisionService
 
-def collect_data():
-    # 
-    print("Initializing sensors...")
-    vision = VisionPipeline()
-    desktop = DesktopPipeline()
-    
-    cap = cv2.VideoCapture(0)
-    csv_filename = Path(__file__).resolve().parents[1] / "data" / "real_training_data.csv"
-    csv_filename.parent.mkdir(parents=True, exist_ok=True)
-    
-    # Initialize CSV if it doesn't exist
-    if not os.path.exists(csv_filename):
-        df = pd.DataFrame(columns=[
-            'ear', 'perclos', 'is_closed', 'active_app', 
-            'keystrokes', 'mouse_clicks', 'focus_score'
-        ])
-        df.to_csv(csv_filename, index=False)
-        print(f"Created {csv_filename}")
 
-    # Every 60 seconds prompt user for their own focus score 
-    PROMPT_INTERVAL_SEC = 60 
-    last_prompt_time = time.time()
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    add_vision_arguments(parser)
+    parser.add_argument('--output', type=Path, default=ROOT / 'data/focus_v2.csv')
+    args = parser.parse_args()
+    if args.preview:
+        parser.error('Collection uses terminal prompts; omit --preview (use live_inference.py for video preview)')
+    fields = ['session_id', 'schema_id', 'landmark_schema', 'calibration_id', 'timestamp', *FEATURES, 'focus_score']
+    args.output.parent.mkdir(parents=True, exist_ok=True)
+    if args.output.exists() and args.output.stat().st_size:
+        with args.output.open(newline='') as source:
+            if next(csv.reader(source)) != fields:
+                parser.error('Output has an incompatible schema; choose a new file instead of mixing v1/v2 rows')
+    pipeline = service = desktop = None
+    try:
+        pipeline = make_pipeline(args)
+        from desktop_pipeline import DesktopPipeline
+        desktop = DesktopPipeline()
+        service = VisionService(pipeline, args.camera, args.width, args.height, args.fps)
+        service.start()
+        session_id = uuid.uuid4().hex
+        next_prompt = time.monotonic() + 60
+        print(f'Collecting session {session_id}, actual backend {pipeline.actual_backend}. Labels refer to the minute ending at each prompt. Ctrl+C to stop.')
+        with args.output.open('a', newline='') as output:
+            writer = csv.DictWriter(output, fieldnames=fields)
+            if output.tell() == 0:
+                writer.writeheader()
+            while True:
+                result = service.get()
+                if result is None:
+                    if service.results.closed:
+                        break
+                    continue
+                metric, _ = result
+                now = time.monotonic()
+                if now < next_prompt:
+                    continue
+                next_prompt = now + 60
+                row = feature_row(metric, desktop.get_current_metrics()) if now - metric.timestamp <= 0.2 else None
+                if row is None:
+                    print(f'Skipping label: insufficient fresh eye data (coverage={metric.valid_coverage_60s:.0%}).')
+                    continue
+                # Freeze features at the prompt; the vision service continues during input.
+                text = input('Focus in the minute just ended, 0–100 (Enter skips, q quits): ').strip()
+                if text.lower() == 'q':
+                    break
+                try:
+                    score = float(text)
+                    if not math.isfinite(score) or not 0 <= score <= 100:
+                        raise ValueError()
+                except ValueError:
+                    print('Skipped; enter a finite number from 0 to 100.')
+                    continue
+                writer.writerow(dict(session_id=session_id, schema_id=SCHEMA_ID,
+                                     landmark_schema=pipeline.identity['schema'], calibration_id=metric.calibration_id,
+                                     timestamp=metric.timestamp, **row, focus_score=score))
+                output.flush()
+                print(f'Saved to {args.output}')
+                # Avoid immediately prompting again after a long input delay.
+                next_prompt = time.monotonic() + 60
+    except KeyboardInterrupt:
+        pass
+    finally:
+        try:
+            if service:
+                service.close()
+            elif pipeline:
+                pipeline.close()
+        finally:
+            if desktop:
+                desktop.close()
 
-    print(f"Collection started. Auto-prompting every {PROMPT_INTERVAL_SEC}s. Press 'q' to quit.\n")
 
-    while cap.isOpened():
-
-        # continous while loop to keep gathering data 
-        ret, frame = cap.read()
-        if not ret:
-            break
-
-        # Call vision pipeline to get the proper eye aspect ratio (EAR), other blink (PERCLOS) & facial data
-        face_metrics = vision.process_frame(frame)
-        
-        current_time = time.time()
-        time_left = int(PROMPT_INTERVAL_SEC - (current_time - last_prompt_time))
-        
-        cv2.putText(frame, f"Next prompt in: {time_left}s | 'q' to quit", 
-                    (20, 40), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 255, 255), 2)
-        cv2.imshow("Data Collection Mode", frame)
-
-        key = cv2.waitKey(1) & 0xFF
-
-        # Can capture at the end of 60s or if interupt of s 
-        if (time_left <= 0) or (key == ord('s')):
-            desktop_metrics = desktop.get_current_metrics()
-            
-            print('\a')  # System beep
-            print(f"\n--- FOCUS CHECK ---")
-            print(f"App: {desktop_metrics['active_app_name']} | Keys: {desktop_metrics['keystrokes']} | EAR: {face_metrics['ear']:.2f}")
-            
-            try:
-                score = float(input("Focus score (0-100): "))
-                
-                new_data = {
-                    'ear': face_metrics['ear'],
-                    'perclos': face_metrics['perclos'],
-                    'is_closed': face_metrics['is_closed'],
-                    'active_app': desktop_metrics['active_app_encoded'],
-                    'keystrokes': desktop_metrics['keystrokes'],
-                    'mouse_clicks': desktop_metrics['mouse_clicks'],
-                    'focus_score': score
-                }
-                
-                pd.DataFrame([new_data]).to_csv(csv_filename, mode='a', header=False, index=False)
-                print(f"Saved to {csv_filename}\n")
-                
-            except ValueError:
-                print("Invalid input. Skipped.\n")
-            
-            last_prompt_time = time.time()
-
-        # input key break 
-        elif key == ord('q'):
-            break
-
-    desktop.close()
-    vision.detector.close()
-    cap.release()
-    cv2.destroyAllWindows()
-    print("Collection stopped.")
-
-if __name__ == "__main__":
-    # Continously grabs data until user quits 
-    collect_data()
+if __name__ == '__main__':
+    main()
