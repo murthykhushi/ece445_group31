@@ -17,6 +17,10 @@ The petting system also got implemented using the previously integrated HC-SR04 
 
 To test the servo motor functionality, I utilized the small LED setup on GPIO 25. My configuration consisted of a Windows device connected over USB-C COM3 port at 115200 baud.
 
+UPDATE
+
+Before leaving the lab session, Michael was able to bring over the servo we were planning to use. After identifying that we needed separate 5V and 3.3V rails, I identified the LM3940 1-A Low-Dropout Regulator (available in self-service) for our purposes, and added wiring and capacitors to implement the physical servo.
+
 ## 10/20
 
 ### Objectives:
