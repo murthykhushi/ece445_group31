@@ -1,5 +1,22 @@
 # Noah's Lab Notebook
 
+## 11/9
+
+### Objectives:
+- Update firmware to display facial expressions instead of plain text
+- Restore focus states from proposal/design documents in code (including hysterisis)
+- Update data payload to match proposal/design documents
+- Added increased petting (ultrasonic sensor) functionality
+
+### What was done:
+I focused on integrating the machine-learning pipeline with the microcontroller firmware. I made key changes to the software, creating a new file called `live_inference_test.py`. In it, I focused on reusing the core proposal architecture, which includes the aggregate scoring and smoothing. I also updated the host script to transmit framed ASCII packets over USB serial every 2000 ms matching the proposal format: `$GF,<state_id>,<score>*<XOR_checksum>\n`
+
+I also worked on the firmware by updating a PlatformIO project's `main.cpp` to update the display without full screen redraws. To satisfy this, I implemented off-screen RAM buffers (`TFT_eSprite`). Delta updates push only modified bounding boxes (eyes, mouth/cheeks, HUD text) in ~18 ms.
+
+The petting system also got implemented using the previously integrated HC-SR04 ultrasonic sensor. I added a bi-directional petting protocol where when petted, the device locks the happy `^ ^` eyes open (suspending blinking), flashes the LED status indicator on GPIO 25, and streams an upstream telemetry event (`EVENT:PET_BOOST:<pts>`) over USB serial to `live_inference_test.py`. The host script then reads the petting boost non-blockingly, increases smoothed_score accordingly, and transmits an updated state packet back down to the board.
+
+To test the servo motor functionality, I utilized the small LED setup on GPIO 25. My configuration consisted of a Windows device connected over USB-C COM3 port at 115200 baud.
+
 ## 10/20
 
 ### Objectives:
