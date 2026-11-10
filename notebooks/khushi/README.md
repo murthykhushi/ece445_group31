@@ -36,10 +36,10 @@ When testing live, performance accuracy increased noticeably, particularly in id
 
 **Topic:** Data Collection, Model Training & Live Iterations
 
-Completed a 2-hour data session capturing three focus states: "locked in," zero focus, and mixed. The logger recorded all 6 features alongside the `focus_score`. The baseline Random Forest model trained on this cleaned data achieved an $R^2$ of ~4% (values were changing though).
+Completed a 2-hour data session capturing three focus states: very focused, zero focus, and mixed. The logger recorded all 6 features alongside the `focus_score`. The baseline Random Forest model trained on this cleaned data achieved an $R^2$ of ~4% (values were changing though).
 
 **Live Inference Iterations**
-Initial live testing clustered scores too tightly (15-40). I updated `live_inference.py` to use a hybrid scoring system:
+Initial live testing clustered scores too tightly (15-40) and would never score over ~50. I updated `live_inference.py` to use a hybrid scoring system:
 1. **ML Score (40%):** Personalized Random Forest prediction; highly responsive to active input.
 2. **Logical Base Score (60%):** Heuristic baseline that penalizes high PERCLOS and rewards productive apps (e.g., VS Code) even if keystrokes drop while reading code.
 3. **EMA Smoothing:** An Exponential Moving Average filter applied to the blended score to prevent erratic UI and hardware jumps.
