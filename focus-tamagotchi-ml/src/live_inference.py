@@ -14,7 +14,7 @@ from desktop_pipeline import DesktopPipeline
 
 # config
 MODEL_PATH = Path(__file__).resolve().parents[1] / "focus_real_model.pkl"
-POLL_INTERVAL_SEC = 60
+POLL_INTERVAL_SEC = 5
 SMOOTHING_FACTOR = 0.3
 LOG_INTERVAL_SEC = 1.0
 
@@ -35,13 +35,13 @@ def main():
     
     print(f"Initializing sensors in {args.mode.upper()} mode...")
     # pass the mode to vision pipeline so mediapipe knows what to use
-    vision = VisionPipeline(mode=args.mode) 
+    vision = VisionPipeline(mode=args.mode, perclos_window_sec=POLL_INTERVAL_SEC * 3) 
     desktop = DesktopPipeline()
     cap = cv2.VideoCapture(0)
     
     # STM32 Serial Setup (Initialized once at startup)
     try:
-        stm32_serial = serial.Serial('/dev/tty.usbmodem1101', 115200, timeout=0.1)
+        stm32_serial = serial.Serial('COM3', 115200, timeout=0.1)
         print("STM32 connected successfully.")
     except serial.SerialException:
         print("Warning: STM32 not connected. Running offline mode.")
@@ -59,7 +59,7 @@ def main():
     last_poll_time = time.time()
     last_log_time = time.time()
     smoothed_score = None
-
+    # fafddddadsfffddasdfasdfdfdfddfdsasdfdfdasdf
     print(f"Live inference started. Predicting every {POLL_INTERVAL_SEC}s. Saving logs to {csv_filename}. Press 'q' to quit.\n")
 
     while cap.isOpened():
@@ -89,11 +89,13 @@ def main():
                         (20, 80), cv2.FONT_HERSHEY_SIMPLEX, 0.8, color, 2)
 
         cv2.imshow("Live Inference", frame)
-
+        
         # trigger full ml inference only when the 60s timer hits 0
         if time_left <= 0:
             full_inference_triggered = True
             desktop_metrics = desktop.get_current_metrics()
+
+            time_multiplier = int(60 / POLL_INTERVAL_SEC)
             
             # bundle current metrics. array order MUST match the training csv exactly
             X_live = [[
@@ -101,8 +103,8 @@ def main():
                 face_metrics['perclos'],
                 face_metrics['is_closed'],
                 desktop_metrics['active_app_encoded'],
-                desktop_metrics['keystrokes'],
-                desktop_metrics['mouse_clicks']
+                desktop_metrics['keystrokes'] * time_multiplier,
+                desktop_metrics['mouse_clicks'] * time_multiplier
             ]]
             
             # 1. get raw prediction from our random forest model
@@ -112,7 +114,7 @@ def main():
             base_score = 50.0 
             if face_metrics['is_closed'] == 1 or face_metrics['perclos'] > 0.4:
                 base_score = 10.0  # heavy penalty for closed eyes/fatigue
-            elif desktop_metrics['active_app_encoded'] == 1:
+            elif desktop_metrics['active_app_encoded'] in [1, 2]:
                 base_score = 75.0  # reward for being in a productive app like vscode
             else:
                 base_score = 40.0
@@ -130,6 +132,7 @@ def main():
             focus_state = 1 if smoothed_score >= 50 else 0
             if stm32_serial:
                 stm32_serial.write(f"{focus_state}\n".encode())
+                stm32_serial.flush()
 
             print(f"App: {desktop_metrics['active_app_name']} | Keys: {desktop_metrics['keystrokes']} | PERCLOS: {face_metrics['perclos']:.2f}")
             print(f"Logic: {base_score} | ML: {raw_ml_score:.1f} | Final: {smoothed_score:.1f} | Sent to STM32: {focus_state}\n")
