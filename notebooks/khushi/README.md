@@ -1,3 +1,15 @@
+# Lab Notebook - 11/10/2026
+**Topic:** CPU percentage successfully under 10%
+
+**Objective**: Optimize the live inference script to lower camera cpu usage 
+
+**Summary**: 
+The Live Inference file was using over 15% cpu because of the vision pipeline, I made the following changes and they resulted in consistent cpu usages of ~1.5-2% (which we can see via telemetry testing)
+1. Throttled vision to 8 fps. Face detection used to run on every camera frame (~30 fps). It now runs about 8 times a second.
+2. Switched to VIDEO mode. MediaPipe detects the face once, then tracks it, instead of running full detection on every frame.
+3. Shrank frames to 320px wide. The model and color conversion process about 4x fewer pixels.
+4. Cheaper camera reads. The camera runs at 640x480, 15 fps, and grab() skips unneeded frames without decoding them.
+
 
 # Lab Notebook - 11/1/2026
 **Topic:** CPU / GPU Optimizations 
