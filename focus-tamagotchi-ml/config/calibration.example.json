@@ -1,0 +1,11 @@
+{
+  "close_left": 0.19,
+  "open_left": 0.23,
+  "close_right": 0.19,
+  "open_right": 0.23,
+  "calibrated_eyes": false,
+  "camera_matrix": null,
+  "distortion": null,
+  "image_size": null,
+  "neutral_angles": [0, 0, 0]
+}

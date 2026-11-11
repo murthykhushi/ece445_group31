@@ -1,12 +1,15 @@
-# Universal Requirements
-opencv-python
+# Base / MediaPipe reference path. Python 3.12 recommended.
+certifi
+numpy>=1.26
+opencv-contrib-python>=4.8
 mediapipe
 pynput
 pandas
 psutil
-scikit-learn
+scikit-learn>=1.3
 joblib
+matplotlib
+pyserial
 
-# OS-Specific Requirements (Environment Markers)
 pywin32; sys_platform == 'win32'
 pyobjc-framework-Cocoa; sys_platform == 'darwin'

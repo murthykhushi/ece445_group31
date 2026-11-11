@@ -1,0 +1,4 @@
+# Install the CUDA-enabled torch wheel for your NVIDIA driver first.
+# CPU reference testing uses the same package with device=cpu.
+torch>=2.4,<3
+kornia==0.8.2
