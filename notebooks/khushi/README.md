@@ -1,4 +1,4 @@
-# Lab Notebook - 11/10/2026
+# Lab Notebook - 11/16/2026
 **Topic:** V2 board soldering 
 
 **Summary**: 
