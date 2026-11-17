@@ -1,4 +1,16 @@
 # Lab Notebook - 11/10/2026
+**Topic:** V2 board soldering 
+
+**Summary**: 
+- New parts and components came in for PCB
+- Noah and I soldered the board completely
+- Needed to program ST-Link 
+
+**Next Steps**: 
+- Going in tomorrow to start testing with ST-link and fully connected parts. 
+
+
+# Lab Notebook - 11/10/2026
 **Topic:** CPU percentage successfully under 10%
 
 **Objective**: Optimize the live inference script to lower camera cpu usage 
